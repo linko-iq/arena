@@ -1,6 +1,14 @@
 // LINKO ARENA V1 - STATIC SHELL
 const CACHE='linko-arena-v1';
-const SHELL=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./apple-touch-icon.png'];
+
+const SHELL=[
+  './',
+  './index.html',
+  './manifest.webmanifest',
+  './icon-192.png',
+  './icon-512.png',
+  './apple-touch-icon.png'
+];
 
 self.addEventListener('install',e=>
   e.waitUntil(
@@ -21,10 +29,10 @@ self.addEventListener('activate',e=>
 );
 
 self.addEventListener('fetch',e=>{
-  if(e.request.method!=='GET')return;
+  if(e.request.method!=='GET') return;
 
   const u=new URL(e.request.url);
-  if(u.origin!==self.location.origin)return;
+  if(u.origin!==self.location.origin) return;
 
   e.respondWith(
     fetch(e.request)
@@ -33,7 +41,9 @@ self.addEventListener('fetch',e=>{
         caches.open(CACHE).then(c=>c.put(e.request,copy));
         return r;
       })
-      .catch(()=>caches.match(e.request)
-        .then(r=>r||caches.match('./index.html')))
+      .catch(()=>
+        caches.match(e.request)
+          .then(r=>r||caches.match('./index.html'))
+      )
   );
 });
