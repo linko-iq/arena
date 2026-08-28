@@ -10,7 +10,7 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icon-192.png">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
-<title>LINKO ARENA</title>
+<title>LINKO ARENA V2</title>
 <style>
 :root{
   --bg:#060913;--panel:#10182a;--panel2:#151f35;--text:#f8f9ff;--muted:#a7b2c9;--line:rgba(255,255,255,.11);
@@ -33,9 +33,14 @@
 .modal{position:fixed;z-index:100;inset:0;background:rgba(1,3,8,.76);backdrop-filter:blur(10px);display:grid;place-items:center;padding:16px}.modal-card{width:min(500px,100%);border-radius:24px;border:1px solid var(--line);background:linear-gradient(155deg,#151e33,#0c1221);box-shadow:var(--shadow);padding:22px;text-align:center}.modal-card h2{font-size:28px;margin:0 0 8px}.modal-card p{margin:0;color:#a8b4ca;line-height:1.8}.modal-actions{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-top:18px}
 .toast{position:fixed;z-index:200;left:50%;bottom:calc(18px + var(--safe));transform:translate(-50%,18px);opacity:0;pointer-events:none;transition:.2s;min-width:min(420px,calc(100vw - 28px));text-align:center;padding:12px 15px;border-radius:14px;background:#121a2c;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 60px rgba(0,0,0,.42);font-size:11px;font-weight:900}.toast.show{opacity:1;transform:translate(-50%,0)}
 .footer-note{margin-top:16px;text-align:center;color:#728099;font-size:9px}
+.mode-card img.img-broken,.choose img.img-broken{opacity:0}.mode-card:before,.choose:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 30% 25%,rgba(73,227,255,.16),transparent 35%),linear-gradient(145deg,#101a2d,#090d18);z-index:0}.mode-card:nth-child(2):before,.choose:nth-child(2):before{background:radial-gradient(circle at 70% 25%,rgba(255,80,109,.18),transparent 35%),linear-gradient(145deg,#21111a,#0b0b13)}
+
 @media(max-width:960px){.hero{grid-template-columns:1fr}.mode-grid{grid-template-columns:1fr}.players{grid-template-columns:1fr}.lobby-choose{grid-template-columns:1fr}.online-dot span{display:none}.mode-card{min-height:300px}}
 @media(max-width:640px){.topbar{padding-inline:11px}.brand small{display:none}.wrap{width:min(100% - 14px,1320px)}.card{border-radius:22px}.hero-copy{padding:22px 17px}.hero-copy h1{font-size:clamp(38px,13vw,64px)}.entry{padding:18px 14px}.actions{grid-template-columns:1fr}.mode-card{min-height:280px}.lobby{padding:15px}.game-hud{padding:6px}.hud-name{font-size:9px}.bar{width:25vw;height:8px}.center-hud b{font-size:13px}.center-hud small{display:none}.dpad{grid-template-columns:repeat(3,40px);grid-template-rows:repeat(2,40px)}.ctrl{min-width:40px;min-height:40px;border-radius:12px}.attack-row .ctrl{min-width:46px}.controls.left{left:5px}.controls.right{right:5px}}
-@media(orientation:portrait) and (max-width:900px){body.in-game .rotate-overlay{display:flex}}
+
+body.in-game{overflow:hidden;touch-action:none}body.in-game .app{height:100dvh;min-height:0;overflow:hidden}body.in-game #gameScreen.active{position:fixed;z-index:80;inset:0;display:flex;align-items:center;justify-content:center;background:#03060c}body.in-game #gameScreen .game-shell{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#03060c}body.in-game #gameScreen .canvas-wrap{width:min(100vw,calc(100dvh * 1.77778));height:min(100dvh,calc(100vw * .5625));max-height:none;aspect-ratio:16/9;margin:auto}
+@media(orientation:portrait) and (max-width:900px){body.in-game #gameScreen .game-shell{width:100dvh;height:100vw;flex:none;transform:rotate(90deg);transform-origin:center center}body.in-game #gameScreen .canvas-wrap{width:100%;height:100%;max-height:none;aspect-ratio:auto}}
+
 @media(prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
@@ -43,7 +48,7 @@
 <div class="app">
   <header class="topbar" id="mainTopbar">
     <div class="brand"><div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16l-2 11H6L4 7Z"/><path d="m8 7 4-4 4 4"/><path d="M9 13h6"/></svg></div><div><b>LINKO ARENA</b><small>MULTIPLAYER BATTLE</small></div></div>
-    <div class="top-actions"><button id="langBtn" class="lang" type="button">AR / EN</button><div class="online-dot"><i></i><span data-i="ready">جاهز للمواجهة</span></div></div>
+    <div class="top-actions"><button id="soundBtn" class="lang" type="button" aria-label="Sound">🔊</button><button id="langBtn" class="lang" type="button">AR / EN</button><div class="online-dot"><i></i><span data-i="ready">جاهز للمواجهة</span></div></div>
   </header>
 
   <main class="wrap">
@@ -68,11 +73,11 @@
       </div>
       <div class="mode-grid">
         <article class="mode-card">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/F-15C_Eagle_210th_FS_over_Alaska.jpg/1280px-F-15C_Eagle_210th_FS_over_Alaska.jpg" alt="F-22 fighter jet">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/1/14/USAF_Raptor.jpg" alt="F-22 fighter jet" onerror="this.classList.add('img-broken')">
           <div class="mode-info"><small>AIR COMBAT</small><h3>SKY WAR</h3><p data-i="skyDesc">طائرات حربية، رشاش، صواريخ، درع واندفاع. أول لاعب يحقق 3 إسقاطات يفوز.</p><div class="mode-stats"><span>1V1</span><span>MISSILES</span><span>BOOST</span><span>SHIELD</span></div></div>
         </article>
         <article class="mode-card">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Boxing_Match_%2815949954691%29.jpg/1280px-Boxing_Match_%2815949954691%29.jpg" alt="Boxing fighter">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/2/23/Boxing_match_%2811327917844%29.jpg" alt="Boxing fighter" onerror="this.classList.add('img-broken')">
           <div class="mode-info"><small>FIGHTING</small><h3>FIGHT ARENA</h3><p data-i="fightDesc">قتال سريع، قفز، ضربة عادية، ضربة قوية، دفاع وضربة خاصة. أول لاعب يفوز بجولتين يحسم المباراة.</p><div class="mode-stats"><span>BEST OF 3</span><span>COMBO</span><span>BLOCK</span><span>SPECIAL</span></div></div>
         </article>
       </div>
@@ -87,8 +92,8 @@
           <div class="player"><div id="p2Avatar" class="avatar">P2</div><div><b id="p2NameView">Player 2</b><small data-i="playerTwo">اللاعب الثاني</small></div><span id="p2State" class="state-ok state-wait" data-i="waiting">انتظار</span></div>
         </div>
         <div class="lobby-choose">
-          <button id="startSkyBtn" class="choose" type="button"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/F-15C_Eagle_210th_FS_over_Alaska.jpg/1280px-F-15C_Eagle_210th_FS_over_Alaska.jpg" alt="Sky War"><span>✈️ SKY WAR</span></button>
-          <button id="startFightBtn" class="choose" type="button"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Boxing_Match_%2815949954691%29.jpg/1280px-Boxing_Match_%2815949954691%29.jpg" alt="Fight Arena"><span>🥊 FIGHT ARENA</span></button>
+          <button id="startSkyBtn" class="choose" type="button"><img src="https://upload.wikimedia.org/wikipedia/commons/1/14/USAF_Raptor.jpg" alt="Sky War" onerror="this.classList.add('img-broken')"><span>✈️ SKY WAR</span></button>
+          <button id="startFightBtn" class="choose" type="button"><img src="https://upload.wikimedia.org/wikipedia/commons/2/23/Boxing_match_%2811327917844%29.jpg" alt="Fight Arena" onerror="this.classList.add('img-broken')"><span>🥊 FIGHT ARENA</span></button>
         </div>
         <div class="lobby-actions"><button id="backHomeBtn" class="btn ghost" type="button" data-i="back">رجوع</button><button id="copyRoomBtn" class="btn secondary hidden" type="button" data-i="copyCode">نسخ رمز الغرفة</button></div>
       </div>
@@ -114,13 +119,12 @@
             <div class="attack-row"><button class="ctrl fire" data-control="p2-a">A</button><button class="ctrl special" data-control="p2-b">B</button><button class="ctrl boost" data-control="p2-c">C</button></div>
           </div>
         </div>
-        <div class="game-top-actions"><button id="pauseBtn" class="small-btn" type="button">Ⅱ</button><button id="exitGameBtn" class="small-btn" type="button">×</button></div>
+        <div class="game-top-actions"><button id="gameSoundBtn" class="small-btn" type="button" aria-label="Sound">🔊</button><button id="pauseBtn" class="small-btn" type="button">Ⅱ</button><button id="exitGameBtn" class="small-btn" type="button">×</button></div>
       </div>
     </div>
   </section>
 </div>
 
-<div class="rotate-overlay"><div class="rotate-box"><span class="rotate-icon">📱</span><h2 data-i="rotateTitle">لف الهاتف بالعرض</h2><p data-i="rotateDesc">اللعبة مصممة للوضع الأفقي حتى تكون أزرار التحكم ومساحة القتال أوضح.</p></div></div>
 <div id="modalRoot"></div>
 <div id="toast" class="toast"></div>
 
@@ -131,7 +135,7 @@
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const canvas=$('#gameCanvas'),ctx=canvas.getContext('2d');
 const W=1280,H=720;
-const state={lang:'ar',mode:'home',session:'local',isHost:true,room:null,peer:null,conn:null,p1:'Player 1',p2:'Player 2',game:null,paused:false,last:0,raf:0,remoteInputs:null,lastNet:0};
+const state={lang:'ar',mode:'home',session:'local',isHost:true,room:null,peer:null,conn:null,p1:'Player 1',p2:'Player 2',game:null,paused:false,last:0,raf:0,remoteInputs:null,lastNet:0,sound:true};
 const keys={};
 const touch={};
 const i18n={
@@ -183,8 +187,34 @@ function handleNet(d){if(!d||typeof d!=='object')return;
 function send(d){if(state.conn&&state.conn.open)try{state.conn.send(d)}catch{}}
 
 // ---------- Audio ----------
-let audioCtx=null;function beep(freq=440,dur=.06,type='square',vol=.04){try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type;o.frequency.value=freq;g.gain.value=vol;o.connect(g);g.connect(audioCtx.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+dur);o.stop(audioCtx.currentTime+dur)}catch{}}
-function buzz(ms=30){try{navigator.vibrate?.(ms)}catch{}}
+let audioCtx=null;
+function ensureAudio(){
+  try{
+    const AC=window.AudioContext||window.webkitAudioContext;
+    if(!AC)return null;
+    audioCtx=audioCtx||new AC();
+    if(audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});
+    return audioCtx;
+  }catch{return null}
+}
+function beep(freq=440,dur=.06,type='square',vol=.04){
+  if(!state.sound)return;
+  try{
+    const ac=ensureAudio();if(!ac)return;
+    const o=ac.createOscillator(),g=ac.createGain();
+    o.type=type;o.frequency.setValueAtTime(freq,ac.currentTime);
+    g.gain.setValueAtTime(Math.max(.0001,vol),ac.currentTime);
+    g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+dur);
+    o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+dur+.01);
+  }catch{}
+}
+function uiSound(){beep(620,.035,'sine',.022)}
+function startSound(){beep(240,.07,'sawtooth',.03);setTimeout(()=>beep(360,.07,'sawtooth',.03),80);setTimeout(()=>beep(620,.11,'sine',.04),165)}
+function updateSoundButtons(){const x=state.sound?'🔊':'🔇';const a=$('#soundBtn'),b=$('#gameSoundBtn');if(a)a.textContent=x;if(b)b.textContent=x}
+function toggleSound(){state.sound=!state.sound;ensureAudio();updateSoundButtons();if(state.sound)beep(700,.08,'sine',.04)}
+function buzz(ms=30){try{if(state.sound)navigator.vibrate?.(ms)}catch{}}
+addEventListener('pointerdown',()=>ensureAudio(),{capture:true,passive:true});
+addEventListener('click',e=>{if(e.target.closest('.btn,.lang,.small-btn,.choose'))uiSound()},{capture:true});
 
 // ---------- Inputs ----------
 function blankInput(){return {up:false,down:false,left:false,right:false,a:false,b:false,c:false}}
@@ -229,7 +259,7 @@ function updateControlLabels(mode){
     if(a)a.textContent=map.a;if(b)b.textContent=map.b;if(c)c.textContent=map.c;
   }
 }
-function startGame(mode,fromNet=false){if(state.session==='online'&&!state.isHost&&!fromNet){toast(t('hostOnly'));return}if(state.session==='online'&&state.isHost&&!state.p2){toast(t('waiting'));return}state.game=mode==='sky'?initSky():initFight();state.paused=false;updateControlLabels(mode);showScreen('#gameScreen');$('#hudMode').textContent=mode==='sky'?'SKY WAR':'FIGHT ARENA';$('#hudP1Name').textContent=state.p1;$('#hudP2Name').textContent=state.p2||'P2';state.last=performance.now();if(state.session==='online'&&state.isHost&&!fromNet)send({type:'start',mode});cancelAnimationFrame(state.raf);state.raf=requestAnimationFrame(loop)}
+function startGame(mode,fromNet=false){if(state.session==='online'&&!state.isHost&&!fromNet){toast(t('hostOnly'));return}if(state.session==='online'&&state.isHost&&!state.p2){toast(t('waiting'));return}ensureAudio();state.game=mode==='sky'?initSky():initFight();state.paused=false;updateControlLabels(mode);showScreen('#gameScreen');$('#hudMode').textContent=mode==='sky'?'SKY WAR':'FIGHT ARENA';$('#hudP1Name').textContent=state.p1;$('#hudP2Name').textContent=state.p2||'P2';state.last=performance.now();startSound();try{screen.orientation?.lock?.('landscape').catch(()=>{})}catch{}if(state.session==='online'&&state.isHost&&!fromNet)send({type:'start',mode});cancelAnimationFrame(state.raf);state.raf=requestAnimationFrame(loop)}
 function getInputs(){if(state.session==='local')return[localInput(1),localInput(2)];if(state.isHost)return[localInput(1),state.remoteInputs||blankInput()];const mine=localInput(2);const now=performance.now();if(now-state.lastNet>33){state.lastNet=now;send({type:'input',input:mine})}return[blankInput(),mine]}
 function serializeGame(){const g=state.game;if(!g)return null;if(g.mode==='sky')return{mode:g.mode,time:g.time,winner:g.winner,p1:{...g.p1},p2:{...g.p2},bullets:g.bullets.map(b=>({x:b.x,y:b.y,vx:b.vx,life:b.life,owner:b.owner===g.p1?1:2})),missiles:g.missiles.map(m=>({x:m.x,y:m.y,vx:m.vx,vy:m.vy,life:m.life,owner:m.owner===g.p1?1:2})),particles:g.particles};return{mode:g.mode,time:g.time,round:g.round,winner:g.winner,roundPause:g.roundPause,p1:{...g.p1},p2:{...g.p2},particles:g.particles}}
 function applySnapshot(s){if(!s||!state.game)return;if(s.mode==='sky'){const p1=state.game.p1,p2=state.game.p2;Object.assign(p1,s.p1);Object.assign(p2,s.p2);state.game.time=s.time;state.game.winner=s.winner;state.game.bullets=s.bullets.map(b=>({...b,owner:b.owner===1?p1:p2}));state.game.missiles=s.missiles.map(m=>({...m,owner:m.owner===1?p1:p2}));state.game.particles=s.particles||[]}else{Object.assign(state.game.p1,s.p1);Object.assign(state.game.p2,s.p2);state.game.time=s.time;state.game.round=s.round;state.game.winner=s.winner;state.game.roundPause=s.roundPause;state.game.particles=s.particles||[]}}
@@ -241,7 +271,7 @@ function endGame(reason){if(!state.game)return;const mode=state.game.mode;endLoo
 function showEndModal(winner,mode,reason){cancelAnimationFrame(state.raf);let title=reason==='disconnect'?(state.lang==='ar'?'انقطع الاتصال':'Connection lost'):(winner===0?t('draw'):`${t('win')}: ${winner===1?state.p1:state.p2}`);$('#modalRoot').innerHTML=`<div class="modal"><div class="modal-card"><h2>${title}</h2><p>${mode==='sky'?'SKY WAR':'FIGHT ARENA'}</p><div class="modal-actions"><button id="rematchBtn" class="btn primary" type="button">${t('rematch')}</button><button id="toLobbyBtn" class="btn secondary" type="button">${t('lobby')}</button></div></div></div>`;$('#rematchBtn').onclick=()=>{if(state.session==='online'&&!state.isHost){toast(t('hostOnly'));return}$('#modalRoot').innerHTML='';if(state.session==='online')send({type:'rematch',mode});startGame(mode,true)};$('#toLobbyBtn').onclick=()=>{$('#modalRoot').innerHTML='';endLoop();if(state.session==='online'&&state.isHost)send({type:'backLobby'});openLobby()}}
 
 // ---------- Buttons ----------
-$('#langBtn').onclick=()=>{state.lang=state.lang==='ar'?'en':'ar';applyLang()};
+$('#langBtn').onclick=()=>{state.lang=state.lang==='ar'?'en':'ar';applyLang()};$('#soundBtn').onclick=toggleSound;$('#gameSoundBtn').onclick=toggleSound;
 $('#localBtn').onclick=()=>{state.p1=nameOr('#p1NameInput','');state.p2=nameOr('#p2NameInput','');if(!state.p1){toast(t('needP1'));return}if(!state.p2){toast(t('needP2'));return}cleanupPeer();state.session='local';state.isHost=true;state.room=null;openLobby()};
 $('#createOnlineBtn').onclick=setupHost;$('#joinOnlineBtn').onclick=setupGuest;$('#backHomeBtn').onclick=()=>{cleanupPeer();endLoop();showScreen('#homeScreen')};
 $('#startSkyBtn').onclick=()=>startGame('sky');$('#startFightBtn').onclick=()=>startGame('fight');
@@ -249,7 +279,7 @@ $('#copyRoomBtn').onclick=async()=>{try{await navigator.clipboard.writeText(stat
 $('#pauseBtn').onclick=()=>{state.paused=!state.paused;if(state.paused){$('#modalRoot').innerHTML=`<div class="modal"><div class="modal-card"><h2>${t('paused')}</h2><div class="modal-actions"><button id="resumeBtn" class="btn primary" type="button">${t('resume')}</button></div></div></div>`;$('#resumeBtn').onclick=()=>{state.paused=false;$('#modalRoot').innerHTML='';state.last=performance.now()}}};
 $('#exitGameBtn').onclick=()=>{endLoop();openLobby()};
 
-applyLang();
+applyLang();updateSoundButtons();
 if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(()=>{}));
 })();
 </script>
